@@ -1,0 +1,224 @@
+Group: 21
+---------
+2098820
+Oguzcan Budumlu
+---------
+2257541
+Omer Cetin
+---------
+
+
+In order to perform experiments, necessary commands to be executed in terminal are listed below. There is no something to synchronize nodes because it is done in scripts.
+The details related to commands are explained following these commands.
+For each experiment, order of lines should be followed from from top to bottom (Order is important for both nodes and commands).
+
+Note that source shold be run at most 30 seconds after destination. If not, destination should be run again.
+Note that d stands for destination, r1 stands for router 1, r2 stands for router 2, b stands for broker and s stands for source.
+
+For all experiments, "add" command is used together with netem/tc commands if the delay is added for the first time. If not, there is no need to use the command with "add" keyword.
+
+
+#####################################################################################################################################################
+################################################################# 1 ms +- 5 ms ######################################################################
+#####################################################################################################################################################
+
+
+
+
+############## Emulating Delays ##############
+
+------------- r1 Node ---------------
+sudo tc qdisc add dev eth2 root netem delay 1ms
+sudo tc qdisc change dev eth2 root netem delay 1ms 5ms distribution normal
+------------------------------------
+According to the topology, IP address of destination node is chosen and this is written 
+in the script. Therefore, it is determined that router 1 and destination communicate via
+eth2 interface and the delay is added to this link with +-5ms normal distribution.
+------------------------------------
+
+
+------------- r2 Node -------------
+sudo tc qdisc add dev eth1 root netem delay 1ms
+sudo tc qdisc change dev eth1 root netem delay 1ms 5ms distribution normal
+------------------------------------
+According to the topology, IP address of destination is chosen and this is written 
+in the script.Therefore, it is determined that router 1 and destination communicate via 
+eth1 interface and the delay is added to this link with +-5ms normal distribution.
+------------------------------------
+
+
+------------- b Node -------------
+sudo tc qdisc add dev eth1 root netem delay 1ms
+sudo tc qdisc add dev eth3 root netem delay 1ms
+sudo tc qdisc change dev eth1 root netem delay 1ms 5ms distribution normal
+sudo tc qdisc change dev eth3 root netem delay 1ms 5ms distribution normal
+------------------------------------
+According to the topology, IP address of router 1 and router 2 are chosen and this is 
+written in the the script.Therefore, it is determined that broker and router 1 
+communicate via eth1 interface and broker and router 2 communicate via eth2 interface.
+The delay is added to these links with +-5ms normal distribution.
+------------------------------------
+
+
+
+
+############# Running the scripts #############
+
+------------- d Node ---------------
+python destination.py
+------------------------------------
+
+
+------------- r1 Node ---------------
+python router1.py
+------------------------------------
+
+
+------------- r2 Node -------------
+python router2.py
+------------------------------------
+
+------------- b Node -------------
+python broker.py
+------------------------------------
+
+
+------------- s Node -------------
+python source.py
+------------------------------------
+
+
+
+#####################################################################################################################################################
+################################################################# 20 ms +- 5ms ######################################################################
+#####################################################################################################################################################
+
+
+
+############## Emulating Delays ##############
+
+------------- r1 Node ---------------
+sudo tc qdisc add dev eth2 root netem delay 20ms
+sudo tc qdisc change dev eth2 root netem delay 20ms 5ms distribution normal
+------------------------------------
+According to the topology, IP address of destination node is chosen and this is written 
+in the script. Therefore, it is determined that router 1 and destination communicate via
+eth2 interface and the delay is added to this link with +-5ms normal distribution.
+------------------------------------
+
+
+------------- r2 Node -------------
+sudo tc qdisc add dev eth1 root netem delay 20ms
+sudo tc qdisc change dev eth1 root netem delay 20ms 5ms distribution normal
+------------------------------------
+According to the topology, IP address of destination is chosen and this is written 
+in the script.Therefore, it is determined that router 1 and destination communicate via 
+eth1 interface and the delay is added to this link with +-5ms normal distribution.
+------------------------------------
+
+------------- b Node -------------
+sudo tc qdisc add dev eth1 root netem delay 20ms
+sudo tc qdisc add dev eth3 root netem delay 20ms
+sudo tc qdisc change dev eth1 root netem delay 20ms 5ms distribution normal
+sudo tc qdisc change dev eth3 root netem delay 20ms 5ms distribution normal
+------------------------------------
+According to the topology, IP address of router 1 and router 2 are chosen and this is 
+written in the the script.Therefore, it is determined that broker and router 1 
+communicate via eth1 interface and broker and router 2 communicate via eth2 interface.
+The delay is added to these links with +-5ms normal distribution.
+------------------------------------
+
+
+
+
+############# Running the scripts #############
+
+------------- d Node ---------------
+python destination.py
+------------------------------------
+
+
+------------- r1 Node ---------------
+python router1.py
+------------------------------------
+
+
+------------- r2 Node -------------
+python router2.py
+------------------------------------
+
+------------- b Node -------------
+python broker.py
+------------------------------------
+
+
+------------- s Node -------------
+python source.py
+------------------------------------
+
+
+#####################################################################################################################################################
+################################################################# 60 ms +- 5 ms #####################################################################
+#####################################################################################################################################################
+
+
+############## Emulating Delays ##############
+
+------------- r1 Node ---------------
+sudo tc qdisc add dev eth2 root netem delay 60ms
+sudo tc qdisc change dev eth2 root netem delay 60ms 5ms distribution normal
+------------------------------------
+According to the topology, IP address of destination node is chosen and this is written 
+in the script. Therefore, it is determined that router 1 and destination communicate via
+eth2 interface and the delay is added to this link with +-5ms normal distribution.
+------------------------------------
+
+
+------------- r2 Node -------------
+sudo tc qdisc add dev eth1 root netem delay 60ms
+sudo tc qdisc change dev eth1 root netem delay 60ms 5ms distribution normal
+------------------------------------
+According to the topology, IP address of destination is chosen and this is written 
+in the script.Therefore, it is determined that router 1 and destination communicate via 
+eth1 interface and the delay is added to this link with +-5ms normal distribution.
+------------------------------------
+
+------------- b Node -------------
+sudo tc qdisc add dev eth1 root netem delay 60ms
+sudo tc qdisc add dev eth3 root netem delay 60ms
+sudo tc qdisc change dev eth1 root netem delay 60ms 5ms distribution normal
+sudo tc qdisc change dev eth3 root netem delay 60ms 5ms distribution normal
+------------------------------------
+According to the topology, IP address of router 1 and router 2 are chosen and this is 
+written in the the script.Therefore, it is determined that broker and router 1 
+communicate via eth1 interface and broker and router 2 communicate via eth2 interface.
+The delay is added to these links with +-5ms normal distribution.
+------------------------------------
+
+
+
+
+############# Running the scripts #############
+
+------------- d Node ---------------
+python destination.py
+------------------------------------
+
+
+------------- r1 Node ---------------
+python router1.py
+------------------------------------
+
+
+------------- r2 Node -------------
+python router2.py
+------------------------------------
+
+------------- b Node -------------
+python broker.py
+------------------------------------
+
+
+------------- s Node -------------
+python source.py
+------------------------------------
