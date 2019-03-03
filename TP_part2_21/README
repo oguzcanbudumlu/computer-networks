@@ -1,0 +1,257 @@
+Group: 21
+---------
+2098820
+Oguzcan Budumlu
+---------
+2257541
+Omer Cetin
+---------
+
+The scripts are written using Python 2.7.
+
+	####	STEP BY STEP HOW TO RUN THE SCRIPTS    ####
+1) Get a new slice on GENI.
+2) Reserve the remote machines based on the topology.
+3) Using ssh, transfer the python scripts to related remote machnines taken from GENI.
+4) Get ip address of the remote machines.
+5) Open each script. 
+6) According to remote machines' IP addresses, accordingly arrange the IP addresses and port numbers in the scripts that are explained below.
+	In the Source.py,
+		BROKER macro is used for IP address of the broker.
+		PORT macro is used for the broker's port through which the file will be sent over TCP, will be the same as TCPPORT in the Broker.py
+	In the Broker.py,
+		DESTINATION1 macro is used for the first IP address of the destination device 
+		DESTINATION2 macro is used for the second ip address of the destination device
+		PORT1 macro is used for the port number of the destination through which the first thread will run
+		PORT2 macro is used for the port number of the destination through which the second thread will run
+		TCPPORT macro is used for the port number for the TCP communication in which the input file comes from the source
+	In the Destination.py
+		BROKER macro is used for the ip address of the broker from which the file chunks will come
+		PORT1 macro is used for the port number with which the first thread's socket will be binded, will be the same as PORT1 in the Broker.py
+		PORT2 macro is used for the port number with which the second thread's socket will be binded, will be the same as PORT2 in the Broker.py
+7) In the Source.py, give the path name of the file to be sent with macro FILENAME.
+8) In the Destination.py, give the name of the file that will be the received file with macro FILENAME
+9) You can also play with TIMEOUT, SOCKETBUFFERSIZE and PAYLOADSIZE values.
+10) Firstly, run the Destination.py script.
+11) Then, run the Broker.py script.
+12) Lastly, run the Source.py script.
+
+
+
+#####################################################################
+
+Network Configuration
+
+
+----------------- Broker node -----------------------
+
+
+sudo route add -host 10.10.5.2 gw 10.10.4.2 dev eth3
+sudo route add -host 10.10.3.2 gw 10.10.2.2 dev eth2
+
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         172.16.0.1      0.0.0.0         UG    0      0        0 eth0
+10.0.0.0        10.10.5.1       255.0.0.0       UG    0      0        0 eth2
+10.10.2.0       10.10.5.1       255.255.255.254 UG    0      0        0 eth2
+10.10.2.0       10.10.3.1       255.255.254.0   UG    0      0        0 eth1
+10.10.2.1       10.10.3.1       255.255.255.255 UGH   0      0        0 eth1
+10.10.3.0       0.0.0.0         255.255.255.0   U     0      0        0 eth1
+10.10.4.1       10.10.5.1       255.255.255.255 UGH   0      0        0 eth2
+10.10.5.0       0.0.0.0         255.255.255.0   U     0      0        0 eth2
+172.16.0.0      0.0.0.0         255.240.0.0     U     0      0        0 eth0
+
+
+---------------------------------------------------
+
+
+----------------- r1 node -----------------
+
+
+sudo route add -host 10.10.2.1 dev eth1
+sudo route add -host 10.10.3.1 dev eth2
+
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         172.16.0.1      0.0.0.0         UG    0      0        0 eth0
+10.0.0.0        10.10.2.1       255.0.0.0       UG    0      0        0 eth1
+10.10.2.0       0.0.0.0         255.255.255.0   U     0      0        0 eth1
+10.10.2.1       0.0.0.0         255.255.255.255 UH    0      0        0 eth1
+10.10.3.0       0.0.0.0         255.255.255.0   U     0      0        0 eth2
+10.10.3.1       0.0.0.0         255.255.255.255 UH    0      0        0 eth2
+10.10.3.2       0.0.0.0         255.255.255.255 UH    0      0        0 eth2
+10.10.5.2       10.10.3.2       255.255.255.254 UG    0      0        0 eth2
+172.16.0.0      0.0.0.0         255.240.0.0     U     0      0        0 eth0
+
+
+---------------------------------------------------
+
+
+----------------- r2 node -----------------
+
+
+sudo route add -host 10.10.4.1 dev eth1
+sudo route add -host 10.10.5.2 dev eth2
+
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         172.16.0.1      0.0.0.0         UG    0      0        0 eth0
+10.0.0.0        10.10.4.1       255.0.0.0       UG    0      0        0 eth1
+10.10.2.0       10.10.4.1       255.255.255.0   UG    0      0        0 eth1
+10.10.2.0       10.10.5.2       255.255.254.0   UG    0      0        0 eth2
+10.10.2.2       10.10.5.2       255.255.255.254 UG    0      0        0 eth2
+10.10.4.0       0.0.0.0         255.255.255.0   U     0      0        0 eth1
+10.10.4.1       0.0.0.0         255.255.255.255 UH    0      0        0 eth1
+10.10.5.0       0.0.0.0         255.255.255.0   U     0      0        0 eth2
+10.10.5.2       0.0.0.0         255.255.255.255 UH    0      0        0 eth2
+172.16.0.0      0.0.0.0         255.240.0.0     U     0      0        0 eth0
+
+---------------------------------------------------
+
+----------------- Destination node -----------------
+
+
+
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         172.16.0.1      0.0.0.0         UG    0      0        0 eth0
+10.0.0.0        10.10.5.1       255.0.0.0       UG    0      0        0 eth2
+10.10.2.0       10.10.5.1       255.255.255.254 UG    0      0        0 eth2
+10.10.2.0       10.10.3.1       255.255.254.0   UG    0      0        0 eth1
+10.10.2.1       10.10.3.1       255.255.255.255 UGH   0      0        0 eth1
+10.10.3.0       0.0.0.0         255.255.255.0   U     0      0        0 eth1
+10.10.4.1       10.10.5.1       255.255.255.255 UGH   0      0        0 eth2
+10.10.5.0       0.0.0.0         255.255.255.0   U     0      0        0 eth2
+172.16.0.0      0.0.0.0         255.240.0.0     U     0      0        0 eth0
+
+
+---------------------------------------------------
+
+#####################################################################
+
+
+Commands for experiments
+
+Note that commands with "add" keyword should be used only once, then you should continue with "change" keyword commands without looking type of experiment.
+
+
+*********************** Reordering ************************
+
+Up to desired reordering percentage, just replace X with one of these number: 1, 10, 35
+
+----------------- Broker node -----------------
+
+sudo tc qdisc add dev eth2 root netem loss 0% corrupt 0% duplicate 0% delay 3ms reorder X% 50%
+
+sudo tc qdisc add dev eth3 root netem loss 0% corrupt 0% duplicate 0% delay 3ms reorder X% 50%
+
+
+
+sudo tc qdisc change dev eth2 root netem loss 0% corrupt 0% duplicate 0% delay 3ms reorder X% 50%
+
+sudo tc qdisc change dev eth3 root netem loss 0% corrupt 0% duplicate 0% delay 3ms reorder X% 50%
+
+
+
+---------------------------------------------------
+
+
+
+----------------- Destination node -----------------
+
+sudo tc qdisc change dev eth1 root netem loss 0% corrupt 0% duplicate 0% delay 3ms reorder X% 50%
+
+sudo tc qdisc change dev eth2 root netem loss 0% corrupt 0% duplicate 0% delay 3ms reorder X% 50%
+
+
+
+
+sudo tc qdisc change dev eth1 root netem loss 0% corrupt 0% duplicate 0% delay 3ms reorder X% 50%
+
+sudo tc qdisc change dev eth2 root netem loss 0% corrupt 0% duplicate 0% delay 3ms reorder X% 50%
+
+
+---------------------------------------------------
+
+
+****************************************************************
+
+
+
+*********************** Packet Loss ************************
+
+Up to desired reordering percentage, just replace X with one of these number: 0.5, 10, 20
+
+----------------- Broker node -----------------
+
+sudo tc qdisc add dev eth2 root netem loss X% corrupt 0% duplicate 0% delay 3ms reorder 0% 0%
+
+sudo tc qdisc add dev eth3 root netem loss X% corrupt 0% duplicate 0% delay 3ms reorder 0% 0%
+
+
+sudo tc qdisc change dev eth2 root netem loss X% corrupt 0% duplicate 0% delay 3ms reorder 0% 0%
+
+sudo tc qdisc change dev eth3 root netem loss X% corrupt 0% duplicate 0% delay 3ms reorder 0% 0%
+
+
+---------------------------------------------------
+
+
+
+----------------- Destination node -----------------
+
+sudo tc qdisc add dev eth1 root netem loss X% corrupt 0% duplicate 0% delay 3ms reorder 0% 0%
+
+sudo tc qdisc add dev eth2 root netem loss X% corrupt 0% duplicate 0% delay 3ms reorder 0% 0%
+
+sudo tc qdisc change dev eth1 root netem loss X% corrupt 0% duplicate 0% delay 3ms reorder 0% 0%
+
+sudo tc qdisc change dev eth2 root netem loss X% corrupt 0% duplicate 0% delay 3ms reorder 0% 0%
+
+---------------------------------------------------
+
+
+****************************************************************
+
+
+*********************** Corruption ************************
+
+Up to desired reordering percentage, just replace X with one of these number: 0.2, 10, 20
+
+----------------- Broker node -----------------
+
+sudo tc qdisc add dev eth2 root netem loss 0% corrupt X% duplicate 0% delay 3ms reorder 0% 0%
+
+
+sudo tc qdisc add dev eth3 root netem loss 0% corrupt X% duplicate 0% delay 3ms reorder 0% 0%
+
+
+sudo tc qdisc change dev eth2 root netem loss 0% corrupt X% duplicate 0% delay 3ms reorder 0% 0%
+
+
+sudo tc qdisc change dev eth3 root netem loss 0% corrupt X% duplicate 0% delay 3ms reorder 0% 0%
+
+
+
+---------------------------------------------------
+
+
+
+----------------- Destination node -----------------
+
+sudo tc qdisc add dev eth1 root netem loss 0% corrupt X% duplicate 0% delay 3ms reorder 0% 0%
+
+
+sudo tc qdisc add dev eth2 root netem loss 0% corrupt X% duplicate 0% delay 3ms reorder 0% 0%
+
+
+sudo tc qdisc change dev eth1 root netem loss 0% corrupt X% duplicate 0% delay 3ms reorder 0% 0%
+
+
+sudo tc qdisc change dev eth2 root netem loss 0% corrupt X% duplicate 0% delay 3ms reorder 0% 0%
+
+
+---------------------------------------------------
+
+
+****************************************************************
